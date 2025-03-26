@@ -18,7 +18,7 @@ from scipy.interpolate import interp1d
 
 def fitspec(wlambda, flux, err, dq, zstar, listlines, listlinesz, ncomp,
             specConv, q3di, linevary=None, maskwidths=None, peakinit=None,
-            quiet=True, siginit_gas=None, siginit_stars=None, siglim_gas=None,
+            quiet=True, siginit_gas=None, siginit_stars=None, siglim_gas=None, snr_thresh=None,
             tweakcntfit=None, logfile=None):
 
     """
@@ -545,6 +545,46 @@ def fitspec(wlambda, flux, err, dq, zstar, listlines, listlinesz, ncomp,
                 argslineinit['waves'] = gdlambda
             if siglim_gas is not None:
                 argslineinit['siglim'] = siglim_gas
+############################# snr_thresh
+            # TODO apply quiet flag to this
+            if snr_thresh is not None:
+                # Check if the user has provided acceptable values
+                if not isinstance(snr_thresh['SNR_thresh'], (int, float)):
+                    raise ValueError('snr_thresh must be set and be a number')
+                if snr_thresh['SNR_thresh'] <= 0:
+                    raise ValueError('snr_thresh must be positive')
+                
+                if snr_thresh.get('line_mask') is None:
+                    from astropy.stats import sigma_clip
+                    snr_thresh['line_mask'] = sigma_clip(q3do.line_dat, sigma=3).mask
+                    print('Warning: No line mask provided, using sigma clipping to mask lines')
+
+                if snr_thresh.get('peak_or_int') not in ['peak', 'int']:
+                    snr_thresh['peak_or_int'] = 'peak'
+                    if snr_thresh.get('peak_or_int') is not None:
+                        print('Warning: snr_thresh must be either peak or int, using default peak')
+                if snr_thresh.get('peak_or_int') == 'int':
+                    print('Warning: Integrated SNR uses only a assumed maximum sigma for everything')
+                    print('This is the lower limit for the peak flux if the line would be this broad, narrower lines should be always way above this lower limit')
+                    if snr_thresh.get('sigma_assumed') is None:
+                        raise ValueError('sigma_assumed must be set for integrated SNR')
+
+                snr_resids = q3do.spec - q3do.cont_fit
+                snr_resids = snr_resids[~snr_thresh['line_mask']]
+                noise = np.nanstd(snr_resids)
+
+                if snr_thresh['peak_or_int'] == 'int':
+                    snr_int_flux_min = snr_thresh['SNR_thresh'] * noise * np.sqrt(np.sum(snr_thresh['line_mask']))
+                    snr_fluxpk_min = snr_int_flux_min / (np.sqrt(2*np.pi) * snr_thresh['sigma_assumed'])
+                else:
+                    snr_fluxpk_min = snr_thresh['SNR_thresh'] * noise
+
+            else:
+                snr_fluxpk_min = None
+            argslineinit['snr_flux_thresh'] = snr_fluxpk_min
+#####################              
+                
+                
             if linevary is not None:
                 argslineinit['linevary'] = linevary
             emlmod, q3do.parinit, q3do.siglim = \

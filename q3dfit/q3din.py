@@ -82,7 +82,7 @@ class q3din:
     def init_linefit(self, lines, linetie=None, maxncomp=1, siginit=50.,
                      zinit=None,
                      argscheckcomp={}, argslineinit={}, argslinefit={},
-                     argslinelist={}, checkcomp=True,
+                     argslinelist={}, checkcomp=True, snr_thresh=None,
                      fcnlineinit='lineinit',
                      fcncheckcomp='checkcomp', linevary=None,
                      noemlinfit=True, peakinit=None, perror_errspecwin=20,
@@ -140,6 +140,7 @@ class q3din:
         self.argslinefit = argslinefit
         self.argslinelist = argslinelist
         self.checkcomp = checkcomp
+        self.snr_thresh = snr_thresh
         self.fcncheckcomp = fcncheckcomp
         self.fcnlineinit = fcnlineinit
         self.maxncomp = maxncomp
@@ -302,7 +303,8 @@ class q3din:
         self.zinit_stars = np.full((self.ncols, self.nrows), zinit,
                                    dtype='float64')
 
-    def load_cube(self):
+    def load_cube(self, quiet=False):
+        
         if not os.path.isfile(self.infile):
             print('Data cube not found.')
         else:
@@ -311,7 +313,8 @@ class q3din:
             self.ncols = cube.ncols
             self.nrows = cube.nrows
             self.cubedim = cube.cubedim
-            cube.about()
+            if not quiet:
+                cube.about()
             return(cube)
 
 #if __name__ == "__main__":

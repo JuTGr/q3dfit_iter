@@ -12,7 +12,7 @@ import os
 
 
 def lineinit(linelist, linelistz, linetie, initflux, initsig, maxncomp, ncomp,
-             specConv, lineratio=None, siglim=None, blrcomp=None, 
+             specConv, lineratio=None, siglim=None,snr_flux_thresh=None, blrcomp=None, 
              linevary=None, blrlines=None, blrsiglim=None, waves=None):
     '''
 
@@ -141,6 +141,17 @@ def lineinit(linelist, linelistz, linetie, initflux, initsig, maxncomp, ncomp,
             limited = np.array([1, 0], dtype='uint8')
             limits = np.array([np.finfo(float).eps, np.finfo(float).eps],
                               dtype='float64')
+            
+            #### SNR_thresh
+            if snr_flux_thresh is not None:
+                print('snr_flux_thresh', snr_flux_thresh, 'value', value)
+                limits[0] = snr_flux_thresh
+                # What happens if snr_flux_thresh is higher than init value?
+                # Why is value set to 0 for the second run
+#                raise NotImplementedError('SNR_thresh not implemented yet')
+            
+
+
             # Check if it's a doublet; this will break if weaker line
             # is in list, but stronger line is not
             if line.label in dblt_pairs.keys():

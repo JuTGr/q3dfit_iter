@@ -51,7 +51,7 @@ def execute_fitloop(nspax, colarr, rowarr, cube, q3di, linelist, specConv,
     None.
 
     '''
-    print('Core '+str(core)+': # spaxels fit='+str(nspax))
+    #print('Core '+str(core)+': # spaxels fit='+str(nspax))
     for ispax in range(0, nspax):
         if nocrash:     # In case of crash, just continue with the next spaxel
             try:

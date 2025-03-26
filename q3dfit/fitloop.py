@@ -137,6 +137,7 @@ def fitloop(ispax, colarr, rowarr, cube, q3di, listlines, specConv,
             # Default values
             listlinesz = None
             siglim_gas = None
+            snr_thresh = None
             siginit_gas = None
             siginit_stars = 50.
             tweakcntfit = None
@@ -160,6 +161,11 @@ def fitloop(ispax, colarr, rowarr, cube, q3di, listlines, specConv,
                         siginit_gas = dict()
                         for k in q3di.lines:
                             siginit_gas[k] = q3di.siginit_gas[k][i, j, ]
+
+                ################# snr_thresh #################
+                if q3di.snr_thresh is not None:
+                    snr_thresh = q3di.snr_thresh
+                
 
                 # initialize starting wavelengths for lines
                 # u['line'][(u['name']=='Halpha')]
@@ -219,6 +225,7 @@ def fitloop(ispax, colarr, rowarr, cube, q3di, listlines, specConv,
                                 listlinesz, ncomp, specConv, q3di, quiet=quiet,
                                 linevary=linevary,
                                 siglim_gas=siglim_gas,
+                                snr_thresh=snr_thresh,
                                 siginit_gas=siginit_gas,
                                 siginit_stars=siginit_stars,
                                 tweakcntfit=tweakcntfit, logfile=logfile)

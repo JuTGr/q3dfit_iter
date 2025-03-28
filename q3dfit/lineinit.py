@@ -144,7 +144,7 @@ def lineinit(linelist, linelistz, linetie, initflux, initsig, maxncomp, ncomp,
             
             #### SNR_thresh
             if snr_flux_thresh is not None:
-                print('snr_flux_thresh', snr_flux_thresh, 'value', value)
+                #print('snr_flux_thresh', snr_flux_thresh, 'value', value)
                 limits[0] = snr_flux_thresh
                 # What happens if snr_flux_thresh is higher than init value?
                 # Why is value set to 0 for the second run

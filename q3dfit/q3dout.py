@@ -19,7 +19,7 @@ from scipy import constants
 from scipy.interpolate import interp1d
 import os.path
 
-def load_q3dout(q3di, col, row, cubedim=None):
+def load_q3dout(q3di, col, row, cubedim=None, quiet=False):
     """
     Load object after it's been saved to a file.
 
@@ -50,7 +50,8 @@ def load_q3dout(q3di, col, row, cubedim=None):
         if hasattr(q3dii, 'cubedim'):
             cubedim = q3dii.cubedim
         else:
-            print('load_q3dout: q3di has no attribute cubedim, loading cube')
+            if not quiet:
+                print('load_q3dout: q3di has no attribute cubedim, loading cube')
             cube, vormap = q3dutil.get_Cube(q3dii)
             cubedim = cube.dat.ndim
     if cubedim > 1:

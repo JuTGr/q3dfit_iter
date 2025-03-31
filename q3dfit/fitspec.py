@@ -557,11 +557,12 @@ def fitspec(wlambda, flux, err, dq, zstar, listlines, listlinesz, ncomp,
                 if snr_thresh.get('line_mask') is None:
                     from astropy.stats import sigma_clip
                     snr_thresh['line_mask'] = sigma_clip(q3do.line_dat, sigma=3).mask
-                    print('Warning: No line mask provided, using sigma clipping to mask lines')
+                    if not quiet:
+                        print('Warning: No line mask provided, using sigma clipping to mask lines')
 
                 if snr_thresh.get('peak_or_int') not in ['peak', 'int']:
                     snr_thresh['peak_or_int'] = 'peak'
-                    if snr_thresh.get('peak_or_int') is not None:
+                    if snr_thresh.get('peak_or_int') is not None and not quiet:
                         print('Warning: snr_thresh must be either peak or int, using default peak')
                 if snr_thresh.get('peak_or_int') == 'int':
                     print('Warning: Integrated SNR uses only a assumed maximum sigma for everything')

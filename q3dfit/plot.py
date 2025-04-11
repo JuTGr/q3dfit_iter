@@ -617,7 +617,7 @@ def plotcont(q3do, savefig=False, outfile=None, ct_coeff=None, q3di=None,
 
 def plotline(q3do, nx=1, ny=1, figsize=(16,13), line=None, center_obs=None,
              center_rest=None, size=300., savefig=False, outfile=None,
-             specConv=None):
+             specConv=None, axes = None):
     """
 
     Plot emission line fit and output to JPG
@@ -716,7 +716,9 @@ def plotline(q3do, nx=1, ny=1, figsize=(16,13), line=None, center_obs=None,
     off = off.transpose()
 
     plt.style.use('dark_background')
-    fig = plt.figure(figsize=figsize)
+    ### 
+    if axes is None:
+        fig = plt.figure(figsize=figsize)
     for i in range(0, nlin):
 
         outer = gridspec.GridSpec(ny, nx, wspace=0.2, hspace=0.2)
@@ -739,10 +741,17 @@ def plotline(q3do, nx=1, ny=1, figsize=(16,13), line=None, center_obs=None,
         ct = len(ind)
         if ct > 0:
             # create subplots
-            ax0 = plt.Subplot(fig, inner[0])
-            ax1 = plt.Subplot(fig, inner[1])
-            fig.add_subplot(ax0)
-            fig.add_subplot(ax1)
+            if axes is None:
+                ax0 = plt.Subplot(fig, inner[0])
+                ax1 = plt.Subplot(fig, inner[1])
+            ### my addition
+            if axes is not None:
+                ax0 = axes[0]
+                ax1 = axes[1]
+            else:
+            ###
+                fig.add_subplot(ax0)
+                fig.add_subplot(ax1)
             # create x-ticks
             xticks = np.linspace(xran[0],xran[1],num=5,endpoint=False)
             xticks = np.delete(xticks, [0])
@@ -868,13 +877,23 @@ def plotline(q3do, nx=1, ny=1, figsize=(16,13), line=None, center_obs=None,
     xtit = 'Observed Wavelength ($\mu$m)'
     # if waveunit_out == 'Angstrom':
     #     xtit = 'Observed Wavelength ($\AA$)'
-    fig.suptitle(xtit, fontsize=25)
+    ### my addition
+    if axes is not None:
+        1+1
+    else:
+        ###
+        fig.suptitle(xtit, fontsize=25)
 
     if savefig and outfile is not None:
         if len(outfile[0])>1:
             fig.savefig(outfile[0] + '.jpg')
         else:
             fig.savefig(outfile + '.jpg')
+    
+    plt.style.use('default')
+    
+
+
 
 
 def adjust_ax(ax, fig, fs=20, minor=False):

@@ -277,6 +277,7 @@ def fitloop(ispax, colarr, rowarr, cube, q3di, listlines, specConv,
                                siginit_gas=siginit_gas_tmp,
                                siginit_stars=siginit_stars,
                                siglim_gas=siglim_gas,
+                               snr_thresh=snr_thresh,
                                tweakcntfit=tweakcntfit, logfile=logfile)
                 print('FIT STATUS: '+str(q3do.fitstatus), file=logfile)
                 if not quiet:

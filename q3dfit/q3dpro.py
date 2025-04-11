@@ -301,6 +301,8 @@ class Q3Dpro:
         fluxsum_snc, gdindx, bdindx = snr_cut(fluxsum, fluxsum_err, 
                                               SNRCUT=SNRCUT)
         matrix_size = (fluxsum.shape[0],fluxsum.shape[1],ncomp)
+        #matrix_size = (45, 45, ncomp)
+        print(matrix_size)
         FLUXLOG = False
 
         # --------------------------
@@ -421,6 +423,10 @@ class Q3Dpro:
                     axi.set_xlabel(XYtitle,fontsize=16)
                     axi.set_ylabel(XYtitle,fontsize=16)
                     axi.set_title(ipdat['name'][ci],fontsize=20,pad=45)
+
+                    # my addition
+                    axi.set_xlim(53, 64)
+                    axi.set_ylim(53, 64)
                     # axi.set_ylim([min(xx),np.ceil(max(xx))])
                     # axi.set_xlim([min(yy),np.ceil(max(yy))])
                     if SAVEDATA == True:

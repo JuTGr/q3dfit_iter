@@ -18,9 +18,9 @@ from scipy.interpolate import interp1d
 
 def fitspec(wlambda, flux, err, dq, zstar, listlines, listlinesz, ncomp,
             specConv, q3di, linevary=None, maskwidths=None, peakinit=None,
-            quiet=True, siginit_gas=None, siginit_stars=None, siglim_gas=None, snr_thresh=None,
+            quiet=True, siginit_gas=None, siginit_stars=None, siglim_gas=None, snr_thresh='works_flag',
             tweakcntfit=None, logfile=None):
-
+    print(snr_thresh)
     """
     This function is the core routine to fit the continuum and emission
     lines of a spectrum.
@@ -549,9 +549,9 @@ def fitspec(wlambda, flux, err, dq, zstar, listlines, listlinesz, ncomp,
             # TODO apply quiet flag to this
             if snr_thresh is not None:
                 # Check if the user has provided acceptable values
-                if not isinstance(snr_thresh['SNR_thresh'], (int, float)):
+                if not isinstance(snr_thresh['snr_thresh'], (int, float)):
                     raise ValueError('snr_thresh must be set and be a number')
-                if snr_thresh['SNR_thresh'] <= 0:
+                if snr_thresh['snr_thresh'] <= 0:
                     raise ValueError('snr_thresh must be positive')
                 
                 if snr_thresh.get('line_mask') is None:
@@ -575,13 +575,14 @@ def fitspec(wlambda, flux, err, dq, zstar, listlines, listlinesz, ncomp,
                 noise = np.nanstd(snr_resids)
 
                 if snr_thresh['peak_or_int'] == 'int':
-                    snr_int_flux_min = snr_thresh['SNR_thresh'] * noise * np.sqrt(np.sum(snr_thresh['line_mask']))
+                    snr_int_flux_min = snr_thresh['snr_thresh'] * noise * np.sqrt(np.sum(snr_thresh['line_mask']))
                     snr_fluxpk_min = snr_int_flux_min / (np.sqrt(2*np.pi) * snr_thresh['sigma_assumed'])
                 else:
-                    snr_fluxpk_min = snr_thresh['SNR_thresh'] * noise
+                    snr_fluxpk_min = snr_thresh['snr_thresh'] * noise
 
             else:
                 snr_fluxpk_min = None
+ 
             argslineinit['snr_flux_thresh'] = snr_fluxpk_min
 #####################              
                 

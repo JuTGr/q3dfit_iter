@@ -144,8 +144,15 @@ def lineinit(linelist, linelistz, linetie, initflux, initsig, maxncomp, ncomp,
             
             #### SNR_thresh
             if snr_flux_thresh is not None:
-                #print('snr_flux_thresh', snr_flux_thresh, 'value', value)
-                limits[0] = snr_flux_thresh
+                # TODO maybe implement possibility to flux lim all lines
+                # Only limit the highest Flux line to the SNR threshold
+                # if snr_flux_thresh['limit_all']:
+                #     #print('snr_flux_thresh', snr_flux_thresh, 'value', value)
+                #     limits[0] = snr_flux_thresh['value']
+                # else:
+                if value==max(flx[comp] for flx in initflux.values()):
+                    #print('snr_flux_thresh', snr_flux_thresh, 'value', value)
+                    limits[0] = snr_flux_thresh
                 # What happens if snr_flux_thresh is higher than init value?
                 # Why is value set to 0 for the second run
 #                raise NotImplementedError('SNR_thresh not implemented yet')

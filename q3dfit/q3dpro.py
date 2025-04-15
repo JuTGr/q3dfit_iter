@@ -425,8 +425,8 @@ class Q3Dpro:
                     axi.set_title(ipdat['name'][ci],fontsize=20,pad=45)
 
                     # my addition
-                    axi.set_xlim(53, 64)
-                    axi.set_ylim(53, 64)
+                    #axi.set_xlim(53, 64)
+                    #axi.set_ylim(53, 64)
                     # axi.set_ylim([min(xx),np.ceil(max(xx))])
                     # axi.set_xlim([min(yy),np.ceil(max(yy))])
                     if SAVEDATA == True:

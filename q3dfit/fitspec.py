@@ -544,6 +544,7 @@ def fitspec(wlambda, flux, err, dq, zstar, listlines, listlinesz, ncomp,
                 argslineinit['waves'] = gdlambda
             if siglim_gas is not None:
                 argslineinit['siglim'] = siglim_gas
+                
 ############################# snr_thresh
             # TODO apply quiet flag to this
             if snr_thresh is not None:

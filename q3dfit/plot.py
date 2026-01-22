@@ -613,7 +613,17 @@ def plotcont(q3do, savefig=False, outfile=None, ct_coeff=None, q3di=None,
                 plt.savefig(outfile[0] + '.jpg')
             else:
                 plt.savefig(outfile + '.jpg')
+def wavelength_to_velocity(w):
+    c = 299792.458
+    lambda_0 = 0.5007
+    lambda_0 = (3.5223+1) * lambda_0
+    return c * (w - lambda_0) / lambda_0
 
+def velocity_to_wavelength(v):
+    c = 299792.458
+    lambda_0 = 0.5007
+    lambda_0 = (3.5223+1) * lambda_0
+    return lambda_0 * (1 + v / c)
 
 def plotline(q3do, nx=1, ny=1, figsize=(16,13), line=None, center_obs=None,
              center_rest=None, size=300., savefig=False, outfile=None,
@@ -641,6 +651,12 @@ def plotline(q3do, nx=1, ny=1, figsize=(16,13), line=None, center_obs=None,
     """
     ncomp = q3do.maxncomp
     colors = ['Magenta', 'Green', 'Orange', 'Teal', 'Blue', 'Red', 'Black']
+    #colors = ['Magenta', 'Orange', 'Green']  
+    colors = ['Orange', 'Magenta', 'Green']   
+    #colors = ['Green', 'Magenta', 'Orange']
+    # colors = ['Orange', 'Magenta', 'Green']
+    #colors = ['orange', 'green']
+    # colors = ['magenta', 'orange', 'teal', 'green']
 
     wave = q3do.wave
     spectot = q3do.spec
@@ -715,7 +731,7 @@ def plotline(q3do, nx=1, ny=1, figsize=(16,13), line=None, center_obs=None,
     off = np.array([-1.*size/2., size/2.])
     off = off.transpose()
 
-    plt.style.use('dark_background')
+    #plt.style.use('dark_background')
     ### 
     if axes is None:
         fig = plt.figure(figsize=figsize)
@@ -726,7 +742,7 @@ def plotline(q3do, nx=1, ny=1, figsize=(16,13), line=None, center_obs=None,
             gridspec.GridSpecFromSubplotSpec(2, 1,
                                              subplot_spec=outer[i],
                                              wspace=0.1, hspace=0,
-                                             height_ratios=[4, 2],
+                                             height_ratios=[4, 0.5], #### ohne residuals 0 sonst 2
                                              width_ratios=None)
 
         # create xran and ind
@@ -767,14 +783,35 @@ def plotline(q3do, nx=1, ny=1, figsize=(16,13), line=None, center_obs=None,
             ax1.set_xticks(xticks)
             ax0.set_xticks(xmticks, minor=True)
             ax1.set_xticks(xmticks, minor=True)
+            secax = ax0.secondary_xaxis('top', functions=(wavelength_to_velocity, velocity_to_wavelength))
+            secax.set_xlabel('Velocity [km/s]', fontsize=20)
+            vel_ticks = np.arange(-1500, 1501, 500)
+            secax.set_xticks(vel_ticks)
+            ax0.axvline(x=0.5007 * (1+3.5223), ls=':', lw=2)
+            for tick in vel_ticks:
+                ax0.axvline(x=velocity_to_wavelength(tick), ls=':', lw=1, color='grey', alpha=0.5)
             ax0.tick_params('x', which='major', direction='in', length=7,
-                            width=2, color='white')
+                            width=2, color='white', labelsize=15)
+            ax0.tick_params('y', which='major', direction='in', length=7,
+                            width=2, color='white', labelsize=15)
             ax0.tick_params('x', which='minor', direction='in', length=5,
-                            width=1, color='white')
+                            width=1, color='white', labelsize=15)
+            ax0.tick_params('y', which='minor', direction='in', length=5,
+                            width=1, color='white', labelsize=15)
             ax1.tick_params('x', which='major', direction='in', length=7,
-                            width=2, color='white')
+                            width=2, color='white', labelsize=15)
+            ## ohne residuals
+            ax1.tick_params('y', which='major', direction='in', length=7,
+                            width=2, color='white', labelsize=15)
             ax1.tick_params('x', which='minor', direction='in', length=5,
-                            width=1,  color='white')
+                            width=1,  color='white', labelsize=15)
+            ax1.tick_params('y', which='minor', direction='in', length=5,
+                            width=1,  color='white', labelsize=15)
+            secax.tick_params('x', labelsize=15)
+
+            # add grid to plots
+            ax0.grid()
+            ax1.grid()
 
             # create yran
             ydat = spectot
@@ -803,15 +840,16 @@ def plotline(q3do, nx=1, ny=1, figsize=(16,13), line=None, center_obs=None,
             else:
                 ytit = ''
             ax0.set(ylabel=ytit)
+            ax0.set_ylabel(ytit, fontsize=20)
             ax0.set_xlim([xran[0], xran[1]])
             ax0.set_ylim([yran[0], yran[1]])
             # plots on ax0
-            ax0.plot(wave, ydat, color='White', linewidth=1)
+            ax0.plot(wave, ydat, color='#444444', linewidth=3)
             xtit = 'Observed Wavelength ($\mu$m)'
             # if waveunit_out == 'Angstrom':
             #     xtit = 'Observed Wavelength ($\AA$)'
             ytit = ''
-            ax0.plot(wave, ymod, color='Red', linewidth=2)
+            ax0.plot(wave, ymod, color='Red', linewidth=4)
             # Plot all lines visible in plot range
             for j in range(0, ncomp):
                 ylaboff = 0.07
@@ -832,7 +870,7 @@ def plotline(q3do, nx=1, ny=1, figsize=(16,13), line=None, center_obs=None,
                             else:
                                 conv = flux
                             ax0.plot(wave, yran[0] + conv, color=colors[j],
-                                     linewidth=2, linestyle='dashed')
+                                     linewidth=4, linestyle='dashed')
                         ax0.annotate(linetext[k], (0.05, 1. - ylaboff),
                                      xycoords='axes fraction',
                                      va='center', fontsize=15)
@@ -863,15 +901,19 @@ def plotline(q3do, nx=1, ny=1, figsize=(16,13), line=None, center_obs=None,
                 yranmax = ymodmax
             yran = [yranmin, yranmax]
             if icol % 1 == 0:
-                ytit = 'Residual'
+                ytit = 'Residual'  # ohne residuals
             else:
                 ytit = ''
             ax1.set(ylabel=ytit)
+            ax1.set_ylabel(ytit, fontsize=20)
+            ax1.set_xlabel('Wavelength [$\mu$m]', fontsize=20)
             # plots on ax1
             ax1.set_xlim([xran[0], xran[1]])
             ax1.set_ylim([yran[0], yran[1]])
-            ax1.plot(wave, ydat, linewidth=1)
-            ax1.plot(wave, ymod, color='Red')
+            ax1.plot(wave, ydat, linewidth=3)
+            ax1.plot(wave, ymod, color='Red', linewidth=2)
+
+            
 
     # title
     xtit = 'Observed Wavelength ($\mu$m)'
@@ -882,8 +924,9 @@ def plotline(q3do, nx=1, ny=1, figsize=(16,13), line=None, center_obs=None,
         1+1
     else:
         ###
-        fig.suptitle(xtit, fontsize=25)
-
+        #fig.suptitle(xtit, fontsize=25)
+        1+1
+    #fig.suptitle(f'Spaxel {q3do.col},{q3do.row}', fontsize=22)
     if savefig and outfile is not None:
         if len(outfile[0])>1:
             fig.savefig(outfile[0] + '.jpg')

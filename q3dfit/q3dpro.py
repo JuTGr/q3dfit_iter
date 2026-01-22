@@ -273,7 +273,12 @@ class Q3Dpro:
         if self.silent is False:
             print('create linemap:', LINESELECT)
 
+
         redshift = self.get_zsys_gas()
+        # redshift = 3.5223
+
+        #print(self.q3dinit.ncomp)
+
         ncomp = np.max(self.q3dinit.ncomp[LINESELECT])
 
         kpc_arcsec = cosmo.kpc_proper_per_arcmin(redshift).value/60.
@@ -420,8 +425,8 @@ class Q3Dpro:
                                       TICKS=vticks, NTICKS=NTICKS)
                     if xyCenter != None :
                         axi.errorbar(qsoCenter[0],qsoCenter[1],color='black',mew=1,mfc='red',fmt='*',markersize=15,zorder=2)
-                    axi.set_xlabel(XYtitle,fontsize=16)
-                    axi.set_ylabel(XYtitle,fontsize=16)
+                    #axi.set_xlabel(XYtitle,fontsize=16)
+                    #axi.set_ylabel(XYtitle,fontsize=16)
                     axi.set_title(ipdat['name'][ci],fontsize=20,pad=45)
 
                     # my addition
@@ -441,7 +446,8 @@ class Q3Dpro:
                      horizontalalignment='right')
                      # verticalalignment='center',
                      # fontweight='semibold')
-        fig.tight_layout()#pad=0.15,h_pad=0.1)
+        #fig.tight_layout(pad=0.15,h_pad=0.1)
+        fig.subplots_adjust(hspace=0.7)
         if SAVEDATA == True:
             pltsave_name = LINESELECT+'_emlin_map'
             print('Saving figure:',pltsave_name)
@@ -454,7 +460,7 @@ class Q3Dpro:
     # def make_contmap(self):
     #     return
 
-    def make_lineratio_map(self, lineA, lineB, SNRCUT=3, SAVEDATA=False, 
+    def make_lineratio_map(self, lineA, lineB, SNRCUT=1, SAVEDATA=False, 
                            PLTNUM=5, KPC=False, VMINMAX=[-1,1]):
         # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         # first identify the lines, extract fluxes, and apply the SNR cuts
@@ -578,8 +584,8 @@ class Q3Dpro:
         figDIM = [1,nps]
         figOUT = set_figSize(figDIM,mshaps[1])
         fig,ax = plt.subplots(1,nps,num=PLTNUM,dpi=100)#, gridspec_kw={'height_ratios': [1, 2]})
-        fig.set_figheight(figOUT[1])
-        fig.set_figwidth(figOUT[0])
+        fig.set_figheight(figOUT[1]*2)
+        fig.set_figwidth(figOUT[0]*2)
 
         CMAP='inferno'
         cmap_r = cm.get_cmap(CMAP)
@@ -609,19 +615,27 @@ class Q3Dpro:
                         for ci in range(0,ncomp):
                             display_pixels_wz(yy, xx, frat10[:,:,ci], CMAP=CMAP, AX=ax[li+ci],
                                               VMIN=VMINMAX[0], VMAX=VMINMAX[1], NTICKS=5, COLORBAR=True)
+                            # ax[li+ci].contour(frat10[:,:,ci].T, levels=[np.log10(3), np.log10(6),1], colors=['c', 'blue','green'], linewidths=1.5,
+                            #                     alpha=1, zorder=20)
                     else:
                         frat10,frat10err = lineratios[linrat]['lrat'][lratF][0],lineratios[linrat]['lrat'][lratF][1]
                         display_pixels_wz(yy, xx, frat10, CMAP=CMAP, AX=ax[li],
                                           VMIN=VMINMAX[0], VMAX=VMINMAX[1], NTICKS=5, COLORBAR=True)
+
+                        # ax[li].contour(frat10.T, levels=[np.log10(3), np.log10(6),1], colors='green', linewidths=1.5,
+                        #                 alpha=1, zorder=20)
+                                          
                 # pltname,pltrange = lineratios[linrat]['pltname'],lineratios[linrat]['pltrange']
                 cf += 1
+
+        
         plt.tight_layout(pad=1.5,h_pad=0.1)
         if SAVEDATA == True:
             pltsave_name = 'emlin_ratio_map.png'
             print('Saving figure:',pltsave_name)
             plt.savefig(os.path.join(self.dataDIR,pltsave_name))
         plt.show()
-        return
+        return frat10
 
 
     def make_BPT(self, SNRCUT=3, SAVEDATA=False, PLTNUM=5, KPC=False):

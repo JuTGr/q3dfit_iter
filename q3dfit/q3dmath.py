@@ -110,7 +110,7 @@ def cmpcvdf(wave, sigma, pkflux, ncomp, line, zref,
     #vdferr = np.zeros((size_cube[0], size_cube[1], nmod))
     cvdf = np.zeros((size_cube[0], size_cube[1], nmod))
     #cvdferr = np.zeros((size_cube[0], size_cube[1], nmod))
-    for i in range(np.max(ncomp)):
+    for i in range(int(np.nanmax(ncomp))):
         rbpkflux = np.repeat((pkflux[:, :, i])[:, :, np.newaxis], nmod, axis=2)
         rbsigma = np.repeat((sigma[:, :, i])[:, :, np.newaxis], nmod, axis=2)
         rbpkwave = np.repeat((wave[:, :, i])[:, :, np.newaxis], nmod, axis=2)

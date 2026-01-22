@@ -297,11 +297,21 @@ def q3dcollect(q3di, cols=None, rows=None, quiet=True, compsortpar='sigma',
                 if thisncomp == 1:
                     isort = [0]
                 elif thisncomp >= 2:
-                    igd = np.arange(thisncomp)
-                    sortpars = q3do.line_fitpars[compsortpar][thisncompline]
-                    isort = np.argsort(sortpars[igd])
-                    if compsortdir == 'down':
-                        isort = np.flip(isort)
+                    #####   my addition
+                    if compsortpar == 'no_sorting':
+                        isort = np.arange(thisncomp) # TODO should this be 0-indexed or 1-indexed?
+                        break
+                    #raise NotImplementedError(
+                    #   'DO not sort in any form not yet implemented')
+                    else:
+                        ############## 
+
+                        igd = np.arange(thisncomp)
+                        sortpars = q3do.line_fitpars[compsortpar][thisncompline]
+                        isort = np.argsort(sortpars[igd])
+                        if compsortdir == 'down':
+                            isort = np.flip(isort)
+                
                 if thisncomp > 0:
                     for line in lines_with_doublets:
                         kcomp = 1
